@@ -20,3 +20,9 @@ The open–closed principle: "Objects or entities should be open for extension b
 The Liskov substitution principle: "Functions that use pointers or references to base classes must be able to use objects of derived classes without knowing it." This means that every subclass or derived class should be substitutable for their base or parent class.
 The interface segregation principle: "Many client-specific interfaces are better than one general-purpose interface."
 The dependency inversion principle: "Depend upon abstractions, [not] concretions."
+
+
+### Sources
+
+- https://refactoring.guru/design-patterns/what-is-pattern
+- https://blog.bitsrc.io/keep-it-simple-with-the-strategy-design-pattern-c36a14c985e9
