@@ -1,4 +1,4 @@
-# Why better?
+# Why best?
 #   Doesn't break SOLID (S)
 #   Classes are discrete, strategy pattern applied
 #   New sorts == new concrete strategy
