@@ -1,0 +1,65 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: |
+  Simple single host deployment that allows you to automatically scp
+
+Parameters:
+
+  VpcId:
+    Description: VPC identifier
+    Type: String
+    Default: vpc-24t823984h02f2
+
+  SubnetId:
+    Description: Subnet identifier
+    Type: String
+    Default: subnet-24t823984h02f2
+
+  KeyPair:
+    Description: Key pair name
+    Type: String
+    Default: example.pem
+
+Resources:
+
+  SecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub ${AWS::StackName}-Ubuntu
+      GroupDescription: Traffic to & from hosts
+      VpcId: !Ref VpcId
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+
+  UbuntuLaunchTemplate:
+    Type: AWS::EC2::LaunchTemplate
+    Properties:
+      LaunchTemplateData:
+        NetworkInterfaces:
+          - DeviceIndex: 0
+            Groups:
+              - !Ref SecurityGroup
+            DeleteOnTermination: true
+        ImageId: ami-0dc5e9ff792ec08e3
+        InstanceType: t2.micro
+        KeyName: !Ref KeyPair
+        UserData:
+          Fn::Base64:
+            Fn::Sub: |
+              #!/bin/bash
+              echo 'I am a start up script'
+
+    UbuntuAutoscalingGroup:
+      DependsOn:
+        - UbuntuLaunchTemplate
+      Type: AWS::AutoScaling::AutoScalingGroup
+      Properties:
+        LaunchTemplate:
+          LaunchTemplateId: !Ref UbuntuLaunchTemplate
+          Version: !GetAtt UbuntuLaunchTemplate.LatestVersionNumber
+        MaxSize: 10
+        MinSize: 1
+        DesiredCapacity: 1
+        VPCZoneIdentifier: !Ref SubnetId
