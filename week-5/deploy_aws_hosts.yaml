@@ -62,4 +62,5 @@ Resources:
       MaxSize: 10
       MinSize: 1
       DesiredCapacity: 1
-      VPCZoneIdentifier: !Ref SubnetId
+      VPCZoneIdentifier:
+        - !Ref SubnetId
