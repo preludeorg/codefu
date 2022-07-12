@@ -51,15 +51,15 @@ Resources:
               #!/bin/bash
               echo 'I am a start up script'
 
-    UbuntuAutoscalingGroup:
-      DependsOn:
-        - UbuntuLaunchTemplate
-      Type: AWS::AutoScaling::AutoScalingGroup
-      Properties:
-        LaunchTemplate:
-          LaunchTemplateId: !Ref UbuntuLaunchTemplate
-          Version: !GetAtt UbuntuLaunchTemplate.LatestVersionNumber
-        MaxSize: 10
-        MinSize: 1
-        DesiredCapacity: 1
-        VPCZoneIdentifier: !Ref SubnetId
+  UbuntuAutoscalingGroup:
+    DependsOn:
+      - UbuntuLaunchTemplate
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      LaunchTemplate:
+        LaunchTemplateId: !Ref UbuntuLaunchTemplate
+        Version: !GetAtt UbuntuLaunchTemplate.LatestVersionNumber
+      MaxSize: 10
+      MinSize: 1
+      DesiredCapacity: 1
+      VPCZoneIdentifier: !Ref SubnetId
