@@ -19,21 +19,34 @@ Parameters:
     Type: String
     Default: example.pem
 
+  AMI:
+    Description: Select the AMI ID that you want to use.
+    Type: String
+    Default: ami-0dc5e9ff792ec08e3
+
+
 Resources:
 
   SecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupName: !Sub ${AWS::StackName}-Ubuntu
-      GroupDescription: Traffic to & from hosts
+      GroupDescription: Traffic to & from hosts for RDP, VNC, and SSH
       VpcId: !Ref VpcId
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 22
           ToPort: 22
           CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 3389
+          ToPort: 3389
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 5900
+          ToPort: 5900
+          CidrIp: 0.0.0.0/0
 
-  UbuntuLaunchTemplate:
+  LaunchTemplate:
     Type: AWS::EC2::LaunchTemplate
     Properties:
       LaunchTemplateData:
@@ -42,8 +55,8 @@ Resources:
             Groups:
               - !Ref SecurityGroup
             DeleteOnTermination: true
-        ImageId: ami-0dc5e9ff792ec08e3
-        InstanceType: t2.micro
+        ImageId: !Ref AMI
+        InstanceType: t3.micro
         KeyName: !Ref KeyPair
         UserData:
           Fn::Base64:
@@ -51,14 +64,14 @@ Resources:
               #!/bin/bash
               echo 'I am a start up script'
 
-  UbuntuAutoscalingGroup:
+  AutoscalingGroup:
     DependsOn:
       - UbuntuLaunchTemplate
     Type: AWS::AutoScaling::AutoScalingGroup
     Properties:
       LaunchTemplate:
-        LaunchTemplateId: !Ref UbuntuLaunchTemplate
-        Version: !GetAtt UbuntuLaunchTemplate.LatestVersionNumber
+        LaunchTemplateId: !Ref LaunchTemplate
+        Version: !GetAtt LaunchTemplate.LatestVersionNumber
       MaxSize: 10
       MinSize: 1
       DesiredCapacity: 1
